@@ -1,4 +1,5 @@
 from numba import boolean
+from numba import float32
 from numba import jit
 import numpy as np
 
@@ -124,3 +125,34 @@ def determine_victoire_coups(moves_list):
         suit_inf = 14*((moves_list[0]-22)//14)+22
         suit_sup = 14*((moves_list[0]-22)//14)+22+14
         return np.argmax(moves_list*(np.sign(moves_list-suit_inf)+np.sign(suit_sup-moves_list)-1))
+
+@jit(nopython=True)
+def generate_players_hand(n_games):
+    """
+    Generates game initializations 
+
+    Parameters
+    ----------
+    n_games : int
+        Number of games to initialize
+
+    Returns
+    ----------
+    hands : array
+        32-bits integer array of players cards
+    chien : array
+        32-bits integer array of chien
+    """
+    hands = np.zeros((n_games, 4, 78), dtype=float32)
+    chien = np.zeros((n_games, 78), dtype=float32)
+    for i in range(n_games):
+        single_hand = np.arange(78)
+        np.random.shuffle(single_hand)
+        single_chien, hand_p1, hand_p2, hand_p3, hand_p4 = single_hand[:6], single_hand[
+            6:24], single_hand[24:42], single_hand[42:60], single_hand[60:78]
+        chien[i,single_chien] = 1
+        hands[i,0,hand_p1] = 1
+        hands[i,1,hand_p2] = 1
+        hands[i,2,hand_p3] = 1
+        hands[i,3,hand_p4] = 1
+    return hands, chien

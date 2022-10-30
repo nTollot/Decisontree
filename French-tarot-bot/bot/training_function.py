@@ -1,6 +1,5 @@
-from importlib.metadata import entry_points
 import tensorflow as tf
-from tensorflow import keras
+from tensorflow.keras import optimizers
 
 
 def train_network_ppo(model, states, actions, available_actions, values, a1, a2, eps, lr, batch_size, n_epochs, clip_norm=1.0, freq=1.0):
@@ -46,7 +45,7 @@ def train_network_ppo(model, states, actions, available_actions, values, a1, a2,
         Last iteration average entropy loss
     """
     n_games = states.shape[0]
-    optimizer = keras.optimizer.Adam(learning_rate=lr, clipnorm=clip_norm)
+    optimizer = optimizers.Adam(learning_rate=lr, clipnorm=clip_norm)
 
     for _ in range(n_epochs):
         # Training loop
