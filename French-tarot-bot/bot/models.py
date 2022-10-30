@@ -20,7 +20,6 @@ class AuctionsAndChienModel(keras.Model):
     ----------
     model : keras model
         Neural network model for auctions and chien
-
     """
     def __init__(self, units, **kwargs):
         super().__init__(**kwargs)
@@ -58,7 +57,6 @@ class MainModel(keras.Model):
     ----------
     model : keras model
         Neural network model for choosing the best card to play
-
     """
     def __init__(self, units, **kwargs):
         super().__init__(**kwargs)
