@@ -1,7 +1,4 @@
-from cmath import exp
-from curses import KEY_REPLACE
 from importlib.metadata import entry_points
-from random import random
 import tensorflow as tf
 from tensorflow import keras
 
@@ -101,9 +98,9 @@ def train_network_ppo(model, states, actions, available_actions, values, a1, a2,
 
                 total_loss = - \
                     tf.reduce_mean(clip_loss-a1*value_loss+a2*entropy_loss)
-                
-            grads = tape.gradient(total_loss,model.trainable_variables)
 
-            optimizer.apply_gradients(zip(grads,model.trainable_variables))
+            grads = tape.gradient(total_loss, model.trainable_variables)
 
-    return clip_loss,value_loss,entropy_loss
+            optimizer.apply_gradients(zip(grads, model.trainable_variables))
+
+    return clip_loss, value_loss, entropy_loss
