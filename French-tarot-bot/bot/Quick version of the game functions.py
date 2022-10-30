@@ -1,7 +1,7 @@
-import numba
 import numpy as np
-
+from numba import boolean as boolean
 from numba import jit
+
 
 
 @jit(nopython=True)
@@ -57,7 +57,7 @@ def genere_coups(hand, moves_list, first_move, second_move):
 
         if biggest_trump_card_possessed >= biggest_trump_card_played:
             # The player has at least one trump card greater than the greatest trump card played
-            available_cards = np.zeros(78, dtype=numba.boolean)
+            available_cards = np.zeros(78, dtype=boolean)
             available_cards[0] = hand[0]
             # The Excuse can always be played
             playable_trump_cards = np.arange(biggest_trump_card_played+1, 22)
@@ -82,7 +82,7 @@ def genere_coups(hand, moves_list, first_move, second_move):
         # The range of the played color
         if hand[suit_range].any():
             # The player has at least one card of the suit played
-            available_cards = np.zeros(78, dtype=numba.boolean)
+            available_cards = np.zeros(78, dtype=boolean)
             available_cards[0] = hand[0]
             # The Excuse can always be played
             available_cards[suit_range] = hand[suit_range]
