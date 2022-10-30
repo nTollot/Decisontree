@@ -8,6 +8,20 @@ from keras.activations import softmax
 
 
 class AuctionsAndChienModel(keras.Model):
+    """
+    Generic model for auctions and chien
+
+    Parameters
+    ----------
+    units : unit class
+        Number of neurons used per layer
+    
+    Returns
+    ----------
+    model : keras model
+        Neural network model for auctions and chien
+
+    """
     def __init__(self, units, **kwargs):
         super().__init__(**kwargs)
         self.hidden = Dense(units.hidden, activation="relu")
@@ -32,6 +46,20 @@ class AuctionsAndChienModel(keras.Model):
 
 
 class MainModel(keras.Model):
+    """
+    Generic model for choosing the best card to play
+
+    Parameters
+    ----------
+    units : unit class
+        Number of neurons used per layer
+    
+    Returns
+    ----------
+    model : keras model
+        Neural network model for choosing the best card to play
+
+    """
     def __init__(self, units, **kwargs):
         super().__init__(**kwargs)
         self.embedding = Embedding(
