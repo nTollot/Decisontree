@@ -1,7 +1,6 @@
-import numpy as np
-from numba import boolean as boolean
+from numba import boolean
 from numba import jit
-
+import numpy as np
 
 
 @jit(nopython=True)
@@ -97,3 +96,31 @@ def genere_coups(hand, moves_list, first_move, second_move):
         else:
             # The player does not have a card of the suit and doesn't have a trump card, so he can play any card
             return hand
+
+
+@jit(nopython=True)
+def determine_victoire_coups(moves_list):
+    """
+    Determines which player wins the trick
+
+    Parameters
+    ----------
+    moves_list : array
+        Integer array of size 4 which indicates the cards played
+
+    Returns
+    ----------
+    determine victory : int
+        Integer index of the winning player
+    """
+    if moves_list[0] == 0:
+        # The first player has played the excuse; in this case, we look at the winner among the 3 other cards
+        return 1 + determine_victoire_coups(moves_list[1:])
+    elif ((moves_list < 22) * (moves_list > 0)).any():
+        # At least one trump card has been played during this round; it's who played the biggest trump card
+        return np.argmax(moves_list*np.sign(22-moves_list))
+    else:
+        # No trump card was played; in this case, the one who played the highest card of the suit played first wins
+        suit_inf = 14*((moves_list[0]-22)//14)+22
+        suit_sup = 14*((moves_list[0]-22)//14)+22+14
+        return np.argmax(moves_list*(np.sign(moves_list-suit_inf)+np.sign(suit_sup-moves_list)-1))
