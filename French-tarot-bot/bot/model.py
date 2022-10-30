@@ -1,7 +1,8 @@
 from tensorflow import keras
 from keras.layers import Dense
+from keras.layers import Embedding
+from keras.layers import Flatten
 from keras.layers import Input
-from keras.layers import Model
 from keras.layers import Multiply
 from keras.activations import softmax
 
@@ -9,24 +10,50 @@ from keras.activations import softmax
 class AuctionsAndChienModel(keras.Model):
     def __init__(self, units, **kwargs):
         super().__init__(**kwargs)
-        self.hidden1 = Dense(units.hidden1,activation="relu")
-        self.hidden2 = Dense(units.hidden2,activation="relu")
-        self.hidden3 = Dense(units.hidden3,activation="relu")
-        self.hidden4 = Dense(units.hidden4,activation="relu")
-        self.value_output = Dense(units.policy_input,activation="linear")
+        self.hidden = Dense(units.hidden, activation="relu")
+        self.hidden_value = Dense(units.hidden_value, activation="relu")
+        self.hidden_policy = Dense(units.hidden_policy, activation="relu")
+        self.value_output = Dense(1, activation="linear")
+        self.policy_output = Dense(units.policy_output, activation="linear")
 
     def call(self, input):
-        hidden1 = self.hidden1(input)
-        hidden2 = self.hidden2(hidden1)
-        hidden3 = self.hidden3(hidden1)
-        output_value = self.
+        history_input, available_input = input
+        hidden = self.hidden(history_input)
+
+        hidden_policy = self.hidden_policy(hidden)
+        policy_output = self.policy_output(hidden_policy)
+        policy_output = Multiply()([policy_output, available_input])
+        policy_output = softmax(policy_output)
+
+        hidden_value = self.hidden_value(hidden)
+        value_output = self.value_output(hidden_value)
+
+        return policy_output, value_output
 
 
+class MainModel(keras.Model):
+    def __init__(self, units, **kwargs):
+        super().__init__(**kwargs)
+        self.embedding = Embedding(
+            input_dim=units.input_dim, output_dim=units.output_dim, input_length=units.input_length)
+        self.hidden = Dense(units.hidden, activation="relu")
+        self.hidden_value = Dense(units.hidden_value, activation="relu")
+        self.hidden_policy = Dense(units.hidden_policy, activation="relu")
+        self.value_output = Dense(1, activation="linear")
+        self.policy_output = Dense(units.policy_output, activation="linear")
 
+    def call(self, input):
+        history_input, available_input = input
+        embedding = self.embedding(history_input)
+        embedding = Flatten()(embedding)
+        hidden = self.hidden(embedding)
 
+        hidden_policy = self.hidden_policy(hidden)
+        policy_output = self.policy_output(hidden_policy)
+        policy_output = Multiply()([policy_output, available_input])
+        policy_output = softmax(policy_output)
 
+        hidden_value = self.hidden_value(hidden)
+        value_output = self.value_output(hidden_value)
 
-
-
-
-
+        return policy_output, value_output
